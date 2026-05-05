@@ -21,17 +21,18 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <button id="audioBtn" class="audio-btn" onclick="toggleAudio()">
-                <svg id="audioIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-                <span id="audioBtnText">Play Audio</span>
-            </button>
+            <div class="audio-wrapper">
+                <button id="audioBtn" class="audio-btn" onclick="toggleAudio()">
+                    <span id="audioBtnText">🔇 Tap to Play</span>
+                </button>
+                <div class="audio-hint" id="audioHint">
+                    <span class="hint-arrow">◂</span>
+                    <span class="hint-text">Tap to play music 🎶</span>
+                </div>
+            </div>
             <div class="logos-wrapper">
                 <div class="logo-container">
-                    <img src="logo-faculty.jpg" alt="Faculty of Engineering Logo" class="university-logo" />
+                    <img src="logo-faculty.png" alt="Faculty of Engineering Logo" class="university-logo" />
                 </div>
                 <div class="logo-container">
                     <img src="logo-university.png" alt="Al-Azhar University Logo" class="university-logo" />
@@ -99,10 +100,8 @@
         <p>Made by Abdallah Shehawey</p>
     </footer>
 
-    <!-- Audio (Graduation Song) -->
-    <audio id="bgAudio" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
-    </audio>
+    <!-- Audio Player -->
+    <audio id="bgAudio"></audio>
 
     <script src="script.js"></script>
 </body>

@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createParticles();
     startCountdown();
     updateLocalTime();
+    initAudio();
 });
 
 // ===== Tab Switching =====
@@ -147,26 +148,95 @@ function updateLocalTime() {
         'Local time: ' + now.toLocaleString('en-US', options);
 }
 
-// ===== Audio Toggle =====
-let isPlaying = false;
+// ===== Audio Playlist =====
+const audioFiles = [
+    'audio/Beehive_Events_لحلمي_أبحرت_سفني_فعادت_تحمل_الخير_🛳️_مقطع_من_البرومو.m4a',
+    'audio/Facebook 1470750324447269(m4a).m4a',
+    'audio/Facebook 1567613794189465(m4a).m4a',
+    'audio/عبدالفتاح_سلامه_واليوم_نلاقي_امالا_؛قد_صالت_في_النفس_وجالت_قد_صرت.m4a',
+];
+
+let shuffledPlaylist = [];
+let currentTrackIndex = 0;
+let audioStarted = false;
+
+// Shuffle array (Fisher-Yates)
+function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function initAudio() {
+    const audio = document.getElementById('bgAudio');
+    shuffledPlaylist = shuffleArray(audioFiles);
+    currentTrackIndex = 0;
+
+    // When a track ends, play the next one
+    audio.addEventListener('ended', () => {
+        currentTrackIndex++;
+        if (currentTrackIndex >= shuffledPlaylist.length) {
+            shuffledPlaylist = shuffleArray(audioFiles);
+            currentTrackIndex = 0;
+        }
+        audio.src = shuffledPlaylist[currentTrackIndex];
+        audio.play().catch(() => {});
+    });
+
+    // Pre-load first track (don't auto-play, wait for user click)
+    audio.src = shuffledPlaylist[currentTrackIndex];
+}
+
+function hideHint() {
+    const hint = document.getElementById('audioHint');
+    if (hint) {
+        hint.classList.add('hidden');
+        setTimeout(() => { hint.style.display = 'none'; }, 500);
+    }
+}
+
+function updateAudioButton(playing) {
+    const btn = document.getElementById('audioBtn');
+    const btnText = document.getElementById('audioBtnText');
+    if (playing) {
+        btn.classList.add('playing');
+        btnText.textContent = '🔊 Playing';
+    } else {
+        btn.classList.remove('playing');
+        btnText.textContent = '🔇 Muted';
+    }
+}
 
 function toggleAudio() {
     const audio = document.getElementById('bgAudio');
-    const btn = document.getElementById('audioBtn');
-    const btnText = document.getElementById('audioBtnText');
 
-    if (isPlaying) {
-        audio.pause();
-        btn.classList.remove('playing');
-        btnText.textContent = 'Play Audio';
-        isPlaying = false;
-    } else {
-        audio.play().catch(() => {
-            // Autoplay blocked
+    if (!audioStarted) {
+        // First click - start playing
+        audio.play().then(() => {
+            audioStarted = true;
+            updateAudioButton(true);
+            hideHint();
+        }).catch(() => {
+            // If play fails, try reloading source
+            audio.src = shuffledPlaylist[currentTrackIndex];
+            audio.play().then(() => {
+                audioStarted = true;
+                updateAudioButton(true);
+                hideHint();
+            }).catch(() => {});
         });
-        btn.classList.add('playing');
-        btnText.textContent = 'Pause Audio';
-        isPlaying = true;
+    } else if (audio.paused) {
+        // Resume playing
+        audio.play().then(() => {
+            updateAudioButton(true);
+        }).catch(() => {});
+    } else {
+        // Pause
+        audio.pause();
+        updateAudioButton(false);
     }
 }
 
