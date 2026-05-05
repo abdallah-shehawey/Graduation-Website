@@ -179,16 +179,16 @@ const STUDENTS = [
         },
     },
     {
-        name: 'Mohamed Anwar',
-        photo: 'Pic/anwar.jpg',
-        track: ['Digital Design'],
-        color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
-        social: {
-            linkedin:  '',
-            github:    '',
-            whatsapp:  '',
-            facebook:  '',
-        },
+    name: 'Mohamed Anwar',
+    photo: 'Pic/anwar.jpg',
+    track: ['Digital IC Design and Verification'],
+    color: 'linear-gradient(135deg, #0ea5e9, #1e3a8a)',
+    social: {
+        linkedin:  'https://www.linkedin.com/in/mohammed-anwar-170727279',
+        github:    'https://github.com/MohammedAnwar2244',
+        whatsapp:  '+201104910528',
+        facebook:  'https://www.facebook.com/share/1BPhMMCQjX/',
+    },
     },
     {
         name: 'Mohamed Beheiry',
@@ -215,27 +215,26 @@ const STUDENTS = [
         },
     },
     {
-        name: 'Mohamed Taha Khalifa',
+        name: 'Mohammed Taha Khalifa',
         photo: 'Pic/khalifa.jpg',
         track: ['Network'],
-        color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+        color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
         social: {
-            linkedin:  '',
-            github:    '',
-            whatsapp:  '',
-            facebook:  '',
+            linkedin:  'https://www.linkedin.com/in/mohammed-taha-khalifa-8264a5349',
+            whatsapp:  '+201127326706',
+            facebook:  'https://www.facebook.com/share/1BY2TNDX8y/',
         },
     },
     {
-        name: 'Mo2men Elzaghawy ',
+        name: 'Momen Elzaghawy',
         photo: 'Pic/momen.jpg',
-        track: ['Digital Design'],
-        color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+        track: ['Digital Design','Digital Verification', 'Asic Verification'],
+        color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
         social: {
-            linkedin:  '',
-            github:    '',
-            whatsapp:  '',
-            facebook:  '',
+            linkedin:  'linkedin.com/in/momenelzaghawy',
+            github:    'https://github.com/momenelzaghawy',
+            whatsapp:  '+201002115038',
+            facebook:  'https://www.facebook.com/share/1BHxWsiLCE/',
         },
     },
     {
@@ -778,7 +777,7 @@ function createParticles() {
         const left = Math.random() * 100;
         const duration = Math.random() * 15 + (isMobile ? 15 : 10); // Slower on mobile
         // Use negative delay so the animation starts immediately but at a random point in its timeline
-        const delay = -(Math.random() * 30);
+        const delay = -(Math.random() * 50);
 
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
