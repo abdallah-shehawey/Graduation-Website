@@ -155,15 +155,14 @@ const STUDENTS = [
         },
     },
     {
-        name: 'Abdalrahman Shaban',
+        name: 'Abdelrahman Shaban',
         photo: 'Pic/shaban.jpg',
-        track: ['Network'],
+        track: ['Network Engineer'],
         color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
         social: {
-            linkedin:  '',
-            github:    '',
-            whatsapp:  '',
-            facebook:  '',
+            linkedin:  'https://www.linkedin.com/in/abdelrahman-shaban-470834243',
+            whatsapp:  '+201115737513',
+            facebook:  'https://www.facebook.com/share/1F175p8e6d/',
         },
     },
     {
