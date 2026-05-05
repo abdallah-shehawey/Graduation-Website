@@ -226,12 +226,12 @@ body::before {
 }
 
 .tab {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
     background: transparent;
     color: var(--text-secondary);
     font-family: var(--font-primary);
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 500;
     border-radius: 50px;
     cursor: pointer;
@@ -259,7 +259,7 @@ body::before {
 }
 
 .main-title {
-    font-size: 2.8rem;
+    font-size: 3rem;
     font-weight: 800;
     letter-spacing: -0.5px;
     background: linear-gradient(135deg, #fff 0%, #e0d4ff 50%, #c4b5fd 100%);
@@ -287,7 +287,7 @@ body::before {
 
 .subtitle {
     font-family: var(--font-secondary);
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
     margin-top: 8px;
     font-weight: 400;
@@ -367,7 +367,7 @@ body::before {
 
 .event-label {
     font-family: var(--font-secondary);
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text-secondary);
     margin-bottom: 30px;
     font-weight: 500;
@@ -409,7 +409,7 @@ body::before {
 }
 
 .countdown-number {
-    font-size: 4rem;
+    font-size: 4.5rem;
     font-weight: 900;
     line-height: 1;
     letter-spacing: -2px;
@@ -429,7 +429,7 @@ body::before {
 }
 
 .countdown-label {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     letter-spacing: 3px;
     color: var(--text-muted);
@@ -438,7 +438,7 @@ body::before {
 
 .local-time {
     font-family: var(--font-secondary);
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-muted);
     font-weight: 400;
 }
@@ -501,15 +501,15 @@ body::before {
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     .main-title {
-        font-size: 1.8rem;
+        font-size: 2.2rem;
     }
 
     .grad-icon {
-        font-size: 1.8rem;
+        font-size: 2rem;
     }
 
     .subtitle {
-        font-size: 0.85rem;
+        font-size: 1rem;
     }
 
     .tabs {
@@ -518,23 +518,27 @@ body::before {
     }
 
     .tab {
-        font-size: 11px;
-        padding: 8px 14px;
+        font-size: 14px;
+        padding: 10px 18px;
     }
 
     .countdown-number {
-        font-size: 2.5rem;
+        font-size: 3.2rem;
     }
 
     .countdown-label {
-        font-size: 9px;
+        font-size: 12px;
         letter-spacing: 2px;
     }
 
     .countdown-item::after {
-        font-size: 1.8rem;
+        font-size: 2rem;
         right: -10px;
         top: 5px;
+    }
+
+    .event-label {
+        font-size: 14px;
     }
 
     .card-content {
@@ -557,13 +561,21 @@ body::before {
 
 @media (max-width: 480px) {
     .main-title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         flex-direction: column;
         gap: 5px;
     }
 
+    .subtitle {
+        font-size: 0.95rem;
+    }
+
     .countdown-number {
-        font-size: 2rem;
+        font-size: 2.8rem;
+    }
+
+    .countdown-label {
+        font-size: 11px;
     }
 
     .audio-btn span {
@@ -575,8 +587,12 @@ body::before {
     }
 
     .tab {
-        font-size: 10px;
-        padding: 7px 10px;
+        font-size: 13px;
+        padding: 9px 16px;
+    }
+
+    .event-label {
+        font-size: 13px;
     }
 }
 

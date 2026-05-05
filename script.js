@@ -8,10 +8,6 @@ const EVENTS = {
         label: 'Project Discussion',
         date: new Date('2026-07-01T10:00:00'),
     },
-    custom: {
-        label: 'Custom Date',
-        date: null,
-    },
 };
 
 let currentTab = 'exam';
@@ -33,25 +29,10 @@ function switchTab(tab) {
     document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
     document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
 
-    // Toggle date picker
-    const datePicker = document.getElementById('datePickerContainer');
-    datePicker.style.display = tab === 'custom' ? 'block' : 'none';
-
     // Reset previous values to force update
     previousValues = { days: '', hours: '', minutes: '', seconds: '' };
 
     startCountdown();
-}
-
-// ===== Set Custom Date =====
-function setCustomDate() {
-    const input = document.getElementById('customDateInput');
-    if (input.value) {
-        EVENTS.custom.date = new Date(input.value);
-        EVENTS.custom.label = 'Custom Date';
-        previousValues = { days: '', hours: '', minutes: '', seconds: '' };
-        startCountdown();
-    }
 }
 
 // ===== Start Countdown =====
