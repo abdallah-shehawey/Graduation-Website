@@ -1236,6 +1236,20 @@ body::before {
     .yearbook-title {
         font-size: 1.6rem;
     }
+
+    .social-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .social-icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .social-links {
+        gap: 4px;
+    }
 }
 
 /* ===== Footer ===== */
