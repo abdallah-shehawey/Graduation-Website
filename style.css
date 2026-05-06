@@ -739,12 +739,12 @@ body::before {
 .stat-item {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 16px;
-    padding: 15px 25px;
+    border-radius: 12px;
+    padding: 10px 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 140px;
+    min-width: 110px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -766,23 +766,23 @@ body::before {
 }
 
 .stat-number {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1.2;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .stat-label {
     font-family: var(--font-secondary);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .yearbook-search-wrapper {
@@ -1350,6 +1350,33 @@ body::before {
 
     .subtitle {
         font-size: 0.95rem;
+    }
+
+    .yearbook-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-bottom: 15px;
+        padding: 0 5px;
+    }
+
+    .stat-item {
+        padding: 6px 2px;
+        min-width: 0;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .stat-number {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .stat-label {
+        font-size: 0.5rem;
+        letter-spacing: -0.2px;
+        text-align: center;
+        line-height: 1.1;
     }
 
     .countdown-number {

@@ -317,27 +317,36 @@ const SOCIAL_CONFIG = {
 function openPhotoModal(student) {
     let modal = document.getElementById('photoModal');
     
-    // Create modal if it doesn't exist
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'photoModal';
         modal.className = 'photo-modal';
         
-        const closeModal = () => {
+        modal.closeModal = (fromPopState = false) => {
             modal.classList.remove('active');
             setTimeout(() => modal.style.display = 'none', 300);
+            if (!fromPopState && window.location.hash === '#student') {
+                history.back();
+            }
         };
 
         modal.addEventListener('click', (e) => {
             if (e.target === modal || e.target.className === 'photo-modal-close') {
-                closeModal();
+                modal.closeModal();
             }
         });
 
         // Close on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.style.display === 'flex') {
-                closeModal();
+                modal.closeModal();
+            }
+        });
+
+        // Handle hardware back button
+        window.addEventListener('popstate', (e) => {
+            if (modal.style.display === 'flex' && window.location.hash !== '#student') {
+                modal.closeModal(true);
             }
         });
 
@@ -390,6 +399,11 @@ function openPhotoModal(student) {
     // Trigger reflow for animation
     void modal.offsetWidth;
     modal.classList.add('active');
+
+    // Add state to browser history for mobile back button
+    if (window.location.hash !== '#student') {
+        history.pushState(null, '', '#student');
+    }
 }
 
 function renderYearbook(list = STUDENTS) {
