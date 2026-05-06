@@ -312,6 +312,7 @@ const SOCIAL_CONFIG = {
     facebook:  { icon: 'icons/facebook.svg',   title: 'Facebook',  buildUrl: v => v },
     github:    { icon: 'icons/github.svg',     title: 'GitHub',    buildUrl: v => v },
     instagram: { icon: 'icons/instagram.svg',  title: 'Instagram', buildUrl: v => v },
+    email:     { icon: 'icons/email.svg',      title: 'Email',     buildUrl: v => `mailto:${v}` },
 };
 
 function openPhotoModal(student) {
@@ -404,6 +405,23 @@ function openPhotoModal(student) {
     if (window.location.hash !== '#student') {
         history.pushState(null, '', '#student');
     }
+}
+
+function openContactModal() {
+    const devInfo = {
+        name: 'Abdallah Shehawey',
+        photo: 'Pic/abdallahshehawey.jpg',
+        track: ['Embedded Systems', 'Embedded Linux', 'DevOps'],
+        color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+        social: {
+            linkedin:  'https://www.linkedin.com/in/abdallah-shehawey',
+            github:  'https://github.com/abdallah-shehawey',
+            whatsapp:  '+201501899476',
+            facebook:  'https://www.facebook.com/share/1BHxWsiLCE/',
+            email: 'shehawey9@gmail.com'
+        },
+    };
+    openPhotoModal(devInfo);
 }
 
 function renderYearbook(list = STUDENTS) {
