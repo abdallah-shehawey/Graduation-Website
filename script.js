@@ -227,7 +227,7 @@ const STUDENTS = [
     {
         name: 'Omar Elstawy',
         photo: 'Pic/setawey.jpg',
-        track: ['Digital Design and Verification'],
+        track: ['Network', 'Embedded Systems', 'Digital Design'],
         color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
         social: {
             linkedin:  '',
