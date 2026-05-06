@@ -30,8 +30,8 @@ const STUDENTS = [
         },
     },
     {
-        name: 'Mohamed Adel Abd EL-Aaty',
-        photo: 'Pic/',
+        name: 'Mohamed Adel',
+        photo: 'Pic/adel.jpeg',
         track: ['Digital Design'],
         color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
         social: {
@@ -171,7 +171,7 @@ const STUDENTS = [
         track: ['Digital Design & Verification'],
         color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
         social: {
-            linkedin:  'https://www.linkedin.com/in/mohamed-elsayed-eldokhmisy',
+            linkedin:  'https://www.linkedin.com/in/mohamed-elsayed-eldokhmisy/',
             github:    'https://github.com/mohamedesayd',
             whatsapp:  '+201024105435',
             facebook:  'https://www.facebook.com/share/1BAUNC4B27/',
