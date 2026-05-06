@@ -121,13 +121,14 @@ const STUDENTS = [
         },
     },
     {
-        name: 'Ali Ibrahim',
-        photo: 'Pic/ali.jpeg',
-        track: 'Network',
-        color: 'linear-gradient(135deg, #f59e0b, #b45309)',
+        name: 'Anas Ghazy',
+        photo: 'Pic/anas.jpeg',
+        track: ['Network Engineer'],
+        color: 'linear-gradient(135deg, #ec4899, #be185d)',
         social: {
-            whatsapp:  '+201023150203',
-            facebook:  'https://www.facebook.com/share/18doCrAE9q/',
+            linkedin:  'https://www.linkedin.com/in/anas-ghazy-aaa896323',
+            whatsapp:  '+201025145996',
+            facebook:  'https://www.facebook.com/share/173eunCXL5/?mibextid=wwXIfr',
         },
     },
     {
