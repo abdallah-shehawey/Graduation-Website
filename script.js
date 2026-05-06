@@ -505,22 +505,147 @@ function renderYearbook(list = STUDENTS) {
     });
 }
 
-function filterStudents(query) {
-    const q = query.trim().toLowerCase();
-    if (!q) {
-        renderYearbook(STUDENTS);
-        return;
-    }
-    const filtered = STUDENTS.filter(s => {
-        // Search by name
-        if (s.name.toLowerCase().includes(q)) return true;
-        // Search by track (supports string or array)
-        if (s.track) {
-            const tracks = Array.isArray(s.track) ? s.track : [s.track];
-            if (tracks.some(t => t.toLowerCase().includes(q))) return true;
-        }
-        return false;
+let selectedCategories = new Set();
+let currentSearchQuery = '';
+
+function getStudentCategories(student) {
+    let tracks = student.track;
+    if (!tracks) return new Set();
+    if (!Array.isArray(tracks)) tracks = [tracks];
+    
+    let categories = new Set();
+    tracks.forEach(track => {
+        const t = track.toLowerCase();
+        if (t.includes('embedded')) categories.add('Embedded');
+        else if (t.includes('digital') || t.includes('ic') || t.includes('asic')) categories.add('Digital Design');
+        else if (t.includes('network')) categories.add('Network');
+        else if (t.includes('ai')) categories.add('AI');
+        else if (t.includes('devops')) categories.add('DevOps');
+        else if (t.includes('test')) categories.add('Software Testing');
+        else categories.add(track);
     });
+    return categories;
+}
+
+function renderStats() {
+    const statsContainer = document.getElementById('yearbookStats');
+    if (!statsContainer) return;
+
+    let trackCounts = {};
+    
+    STUDENTS.forEach(s => {
+        const cats = getStudentCategories(s);
+        cats.forEach(cat => {
+            trackCounts[cat] = (trackCounts[cat] || 0) + 1;
+        });
+    });
+
+    const statsData = [
+        { category: 'All', label: 'Students', count: STUDENTS.length }
+    ];
+
+    // Sort tracks by count (descending)
+    const sortedCategories = Object.entries(trackCounts).sort((a, b) => b[1] - a[1]);
+
+    sortedCategories.forEach(([cat, count]) => {
+        let label = cat;
+        if (cat === 'Embedded' || cat === 'AI' || cat === 'Network' || cat === 'DevOps') {
+            label += ' Engineers';
+        } else if (cat === 'Digital Design') {
+            label = 'Digital Designers';
+        }
+        statsData.push({ category: cat, label: label, count: count });
+    });
+
+    statsContainer.innerHTML = statsData.map(stat => {
+        const isActive = stat.category === 'All' 
+            ? selectedCategories.size === 0 
+            : selectedCategories.has(stat.category);
+        return `
+        <div class="stat-item ${isActive ? 'active-filter' : ''}" data-category="${stat.category}" onclick="toggleCategoryFilter('${stat.category}')">
+            <span class="stat-number" data-target="${stat.count}">0</span>
+            <span class="stat-label">${stat.label}</span>
+        </div>
+        `;
+    }).join('');
+
+    // Animate counters
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(el => {
+        const target = +el.getAttribute('data-target');
+        const duration = 1500; // ms
+        const frameDuration = 1000 / 60;
+        const totalFrames = Math.round(duration / frameDuration);
+        let frame = 0;
+        
+        const counter = setInterval(() => {
+            frame++;
+            const progress = frame / totalFrames;
+            const easeOut = 1 - (1 - progress) * (1 - progress);
+            const currentCount = Math.round(target * easeOut);
+            
+            el.textContent = currentCount;
+            if (frame >= totalFrames) {
+                el.textContent = target;
+                clearInterval(counter);
+            }
+        }, frameDuration);
+    });
+}
+
+function toggleCategoryFilter(cat) {
+    if (cat === 'All') {
+        selectedCategories.clear();
+    } else {
+        if (selectedCategories.has(cat)) {
+            selectedCategories.delete(cat);
+        } else {
+            selectedCategories.add(cat);
+        }
+    }
+    
+    const statItems = document.querySelectorAll('.stat-item');
+    statItems.forEach(item => {
+        const itemCat = item.getAttribute('data-category');
+        if (itemCat === 'All') {
+            item.classList.toggle('active-filter', selectedCategories.size === 0);
+        } else {
+            item.classList.toggle('active-filter', selectedCategories.has(itemCat));
+        }
+    });
+    
+    applyFilters();
+}
+
+function filterStudents(query) {
+    currentSearchQuery = query.trim().toLowerCase();
+    applyFilters();
+}
+
+function applyFilters() {
+    const filtered = STUDENTS.filter(s => {
+        // Text search
+        let matchesText = true;
+        if (currentSearchQuery) {
+            const inName = s.name.toLowerCase().includes(currentSearchQuery);
+            let inTrack = false;
+            if (s.track) {
+                const tracks = Array.isArray(s.track) ? s.track : [s.track];
+                inTrack = tracks.some(t => t.toLowerCase().includes(currentSearchQuery));
+            }
+            matchesText = inName || inTrack;
+        }
+        
+        // Category search (OR logic if multiple selected)
+        let matchesCategory = true;
+        if (selectedCategories.size > 0) {
+            const sCats = getStudentCategories(s);
+            matchesCategory = Array.from(selectedCategories).some(c => sCats.has(c));
+        }
+        
+        return matchesText && matchesCategory;
+    });
+    
     renderYearbook(filtered);
 }
 
@@ -560,7 +685,10 @@ function switchMode(mode) {
         yearbookEl.style.display  = 'block';
         // Clear search on open
         document.getElementById('yearbookSearch').value = '';
-        filterStudents('');
+        currentSearchQuery = '';
+        selectedCategories.clear();
+        applyFilters();
+        renderStats();
     }
 }
 
