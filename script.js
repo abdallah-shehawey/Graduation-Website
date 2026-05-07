@@ -376,6 +376,14 @@ function openPhotoModal(student) {
         tracksHtml = `<div class="student-track-container">${badges}</div>`;
     }
 
+    // ── Team Leader Badge HTML ──
+    const leaderBadgeHtml = student.teamLeader
+        ? `<div class="modal-leader-badge">
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+               Team Leader
+           </div>`
+        : '';
+
     // ── Generate Social Buttons HTML ──
     let socialHtml = '';
     if (student.social) {
@@ -402,6 +410,7 @@ function openPhotoModal(student) {
                 : `<img src="${student.photo}" alt="${student.name}" />`
             }
             <h3>${student.name}</h3>
+            ${leaderBadgeHtml}
             ${tracksHtml}
             ${socialHtml}
         </div>
@@ -694,6 +703,208 @@ function applyFilters() {
 
 
 
+// ===== Graduation Projects Data =====
+const GRADUATION_PROJECTS = [
+    // ── Network ──
+    {
+        category: 'Network',
+        icon: '🌐',
+        team: [
+            { name: 'Ahmed Taha',          leader: true  },
+            { name: 'Abdelrahman Shaban',  leader: false },
+            { name: 'Abdelrahman Eid',     leader: false },
+            { name: 'Omar Elstawy',        leader: false },
+            { name: 'Ali Ibrahim',         leader: false },
+            { name: 'Mahmoud Nassar',      leader: false },
+        ],
+    },
+    {
+        category: 'Network',
+        icon: '📡',
+        team: [
+            { name: 'Mohamed Saeed',         leader: true  },
+            { name: 'Mohammed Taha Khalifa', leader: false },
+            { name: 'Mohamed Behiry',        leader: false },
+            { name: 'Ahmed Elsayed',         leader: false },
+            { name: 'Anas Ghazy',            leader: false },
+            { name: 'Eslam Ahmed',           leader: false },
+        ],
+    },
+    // ── Embedded ──
+    {
+        category: 'Embedded',
+        icon: '🔌',
+        team: [
+            { name: 'Abdallah Shehawey', leader: true  },
+            { name: 'Ahmed Gamal',       leader: false },
+            { name: 'Abdallah Saleh',    leader: false },
+        ],
+    },
+    // ── Digital ──
+    {
+        category: 'Digital',
+        icon: '⚡',
+        team: [
+            { name: 'Abdallah Mohamed Salah',     leader: true  },
+            { name: 'Abdelrahman Adwe',           leader: false },
+            { name: 'Mohamed Adel',               leader: false },
+            { name: 'Yousef Mohamed Abdelfattah', leader: false },
+            { name: 'Mohamed Elsayed Eldokhmisy', leader: false },
+            { name: 'Momen Elzaghawy',            leader: false },
+            { name: 'Mohamed Anwar',              leader: false },
+            
+        ],
+    },
+    {
+        category: 'Digital',
+        icon: '🧠',
+        team: [
+            { name: 'Omar Ahmed',        leader: true  },
+            { name: 'Youssef Elswase',   leader: false },
+            { name: 'Ahmed Abdulhameed', leader: false },
+            { name: 'Mohamed Emadeldin', leader: false },
+            { name: 'Abdelrahman Taha',  leader: false },
+            { name: 'Youssef Elswase',   leader: false },
+            
+        ],
+    },
+];
+
+let currentProjectCat = 'Digital';
+
+// SVG icons per project category
+const PROJ_ICONS = {
+    Digital:  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>`,
+    Embedded: `<img src="icons/embedded_icon.png" alt="Embedded" class="proj-card-img-icon" />`,
+    Network:  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+};
+
+function switchProjectCat(cat) {
+    currentProjectCat = cat;
+
+    // Update tab active state
+    document.querySelectorAll('.project-tab').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector(`[data-pcat="${cat}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    renderProjects();
+}
+
+function renderProjects() {
+    const grid = document.getElementById('projectsGrid');
+    if (!grid) return;
+
+    const filtered = GRADUATION_PROJECTS.filter(p => p.category === currentProjectCat);
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p class="no-projects">No projects found in this category.</p>';
+        return;
+    }
+
+    grid.innerHTML = '';
+    const catKey = currentProjectCat.toLowerCase();
+
+    filtered.forEach((project, idx) => {
+        const card = document.createElement('div');
+        card.className = `project-card cat-${catKey}`;
+        card.style.animationDelay = `${idx * 0.1}s`;
+
+        // ── Card Top: badge + icon ──
+        const cardTop = document.createElement('div');
+        cardTop.className = 'project-card-top';
+        const iconSvg = PROJ_ICONS[project.category] || '';
+        cardTop.innerHTML = `
+            <span class="project-cat-badge cat-${catKey}">${iconSvg} ${project.category}</span>
+            <div class="project-card-icon cat-${catKey}">${iconSvg}</div>
+        `;
+
+        // ── Coming Soon Body ──
+        const comingSoonEl = document.createElement('div');
+        comingSoonEl.className = 'project-coming-soon';
+        comingSoonEl.innerHTML = `
+            <div class="cs-pulse-ring"></div>
+            <span class="cs-clock">🕐</span>
+            <span class="cs-text">Coming Soon</span>
+            <span class="cs-sub">Details will be announced shortly</span>
+        `;
+
+        // ── Team Section ──
+        const teamSection = document.createElement('div');
+        teamSection.className = 'project-team';
+
+        const teamLabel = document.createElement('span');
+        teamLabel.className = 'project-team-label';
+        teamLabel.textContent = 'Team';
+
+        const membersRow = document.createElement('div');
+        membersRow.className = 'project-members';
+
+        project.team.forEach(member => {
+            const student = STUDENTS.find(s => s.name === member.name);
+
+            const pill = document.createElement('button');
+            pill.className = 'project-member-pill' + (member.leader ? ' is-leader' : '');
+            pill.title = member.leader ? `${member.name} — Team Leader` : member.name;
+            pill.type = 'button';
+
+            // Crown for leader — star SVG
+            if (member.leader) {
+                const leaderIcon = document.createElement('span');
+                leaderIcon.className = 'leader-icon';
+                leaderIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+                pill.appendChild(leaderIcon);
+            }
+
+            // Avatar
+            if (student && student.photo) {
+                const img = document.createElement('img');
+                img.src = student.photo;
+                img.alt = member.name;
+                img.className = 'member-avatar-sm';
+                img.addEventListener('error', () => {
+                    const fb = document.createElement('span');
+                    fb.className = 'member-avatar-sm-initials';
+                    fb.style.background = student.color;
+                    fb.textContent = getInitials(member.name);
+                    img.replaceWith(fb);
+                });
+                pill.appendChild(img);
+            } else {
+                const av = document.createElement('span');
+                av.className = 'member-avatar-sm-initials';
+                av.style.background = student ? student.color : 'linear-gradient(135deg,#8b5cf6,#ec4899)';
+                av.textContent = getInitials(member.name);
+                pill.appendChild(av);
+            }
+
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = member.name.split(' ').slice(0, 2).join(' ');
+            pill.appendChild(nameSpan);
+
+            // Click → open student modal (pass teamLeader flag for leaders)
+            if (student) {
+                pill.style.cursor = 'pointer';
+                const studentData = member.leader ? { ...student, teamLeader: true } : student;
+                pill.addEventListener('click', () => openPhotoModal(studentData));
+            } else {
+                pill.style.cursor = 'default';
+                pill.style.opacity = '0.7';
+            }
+
+            membersRow.appendChild(pill);
+        });
+
+        teamSection.appendChild(teamLabel);
+        teamSection.appendChild(membersRow);
+
+        card.appendChild(cardTop);
+        card.appendChild(comingSoonEl);
+        card.appendChild(teamSection);
+
+        grid.appendChild(card);
+    });
+}
+
 let currentTab = 'exam';
 let currentMode = 'countdown';
 let countdownInterval = null;
@@ -719,21 +930,28 @@ function switchMode(mode) {
     // Show/hide sections
     const countdownEl = document.getElementById('mode-countdown');
     const yearbookEl  = document.getElementById('mode-yearbook');
+    const projectsEl  = document.getElementById('mode-projects');
+
+    countdownEl.style.display = 'none';
+    yearbookEl.style.display  = 'none';
+    projectsEl.style.display  = 'none';
 
     if (mode === 'countdown') {
         countdownEl.style.display = 'flex';
-        yearbookEl.style.display  = 'none';
-    } else {
-        countdownEl.style.display = 'none';
-        yearbookEl.style.display  = 'block';
+    } else if (mode === 'yearbook') {
+        yearbookEl.style.display = 'block';
         // Clear search on open
         document.getElementById('yearbookSearch').value = '';
         currentSearchQuery = '';
         selectedCategories.clear();
         applyFilters();
         renderStats();
+    } else if (mode === 'projects') {
+        projectsEl.style.display = 'block';
+        renderProjects();
     }
 }
+
 
 
 // ===== Tab Switching =====

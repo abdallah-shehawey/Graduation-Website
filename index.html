@@ -63,6 +63,14 @@
                 </span>
                 <span class="mode-label">Class Yearbook</span>
             </button>
+            <button class="mode-btn" id="modeProjectsBtn" data-mode="projects" onclick="switchMode('projects')">
+                <span class="mode-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </span>
+                <span class="mode-label">GP Projects</span>
+            </button>
         </nav>
 
         <!-- ===== MODE: COUNTDOWN ===== -->
@@ -158,6 +166,43 @@
             </div>
 
             <p class="no-results" id="noResults" style="display:none;">No students found.</p>
+        </div>
+
+        <!-- ===== MODE: PROJECTS ===== -->
+        <div id="mode-projects" class="projects-section" style="display: none;">
+            <div class="projects-header">
+                <h2 class="projects-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="title-projects-icon">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Graduation Projects
+                </h2>
+                <p class="projects-subtitle">Communication &amp; Electronics · Faculty of Engineering · Al-Azhar University · Class of 2026</p>
+
+                <!-- Project Category Tabs -->
+                <div class="project-tabs" id="projectTabs">
+                    <button class="project-tab active" data-pcat="Digital" onclick="switchProjectCat('Digital')">
+                        <span class="ptab-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>
+                        </span> Digital
+                    </button>
+                    <button class="project-tab" data-pcat="Embedded" onclick="switchProjectCat('Embedded')">
+                        <span class="ptab-icon">
+                            <img src="icons/embedded_icon.png" alt="Embedded" class="ptab-img-icon" />
+                        </span> Embedded
+                    </button>
+                    <button class="project-tab" data-pcat="Network" onclick="switchProjectCat('Network')">
+                        <span class="ptab-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </span> Network
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Rendered by JS -->
+            </div>
         </div>
 
     </div>
