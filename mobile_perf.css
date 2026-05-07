@@ -5,15 +5,15 @@
 @media (max-width: 768px) {
 
     /* ─────────────────────────────────────────────
-       BG FLICKER FIX (most important!)
-       
-       Problem: position:fixed on body::before causes
-       a full repaint every time the browser URL bar
-       shows/hides (viewport height changes).
-       
-       Fix: Remove the fixed pseudo-element and put
-       the background directly on body with scroll
-       attachment. No more repaint = smooth scroll.
+    BG FLICKER FIX (most important!)
+    
+    Problem: position:fixed on body::before causes
+    a full repaint every time the browser URL bar
+    shows/hides (viewport height changes).
+    
+    Fix: Remove the fixed pseudo-element and put
+    the background directly on body with scroll
+    attachment. No more repaint = smooth scroll.
     ───────────────────────────────────────────── */
     body::before {
         display: none !important;
