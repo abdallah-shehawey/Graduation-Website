@@ -65,6 +65,17 @@ const STUDENTS = [
         },
     },
     {
+        name: 'Abdelrahman Eid',
+        photo: 'Pic/eid.jpg',
+        track: ['Network'],
+        color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+        social: {
+            linkedin:  'https://www.linkedin.com/in/abdelrhman-ali-b554063a2',
+            whatsapp:  '+201002959491',
+            facebook:  'https://web.facebook.com/profile.php?id=61557349534819',
+        },
+    },
+    {
         name: 'Abdelrahman Shaban',
         photo: 'Pic/shaban.jpg',
         track: ['Network Engineer'],
@@ -285,18 +296,6 @@ const STUDENTS = [
         name: 'Abdallah Saleh',
         photo: 'Pic/saleh.jpg',
         track: ['Embedded System', 'Software Testing'],
-        color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
-        social: {
-            linkedin:  '',
-            github:  '',
-            whatsapp:  '',
-            facebook:  '',
-        },
-    },
-    {
-        name: 'Abdelrahman Eid',
-        photo: 'Pic/eid.jpg',
-        track: ['Network'],
         color: 'linear-gradient(135deg, #ef4444, #b91c1c)',
         social: {
             linkedin:  '',
