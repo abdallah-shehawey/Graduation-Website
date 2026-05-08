@@ -832,6 +832,15 @@ function renderProjects() {
             <div class="cs-pulse-ring"></div>
             <span class="cs-clock">🕐</span>
             <span class="cs-text">Coming Soon</span>
+            <div class="project-discussion-countdown" aria-label="Project Discussion countdown">
+                <span class="project-discussion-countdown-title">Project Discussion</span>
+                <div class="project-discussion-countdown-grid">
+                    <span><strong data-project-countdown-unit="days">00</strong><small>Days</small></span>
+                    <span><strong data-project-countdown-unit="hours">00</strong><small>Hours</small></span>
+                    <span><strong data-project-countdown-unit="minutes">00</strong><small>Min</small></span>
+                    <span><strong data-project-countdown-unit="seconds">00</strong><small>Sec</small></span>
+                </div>
+            </div>
             <span class="cs-sub">Details will be announced shortly</span>
         `;
 
@@ -910,17 +919,61 @@ function renderProjects() {
 
         grid.appendChild(card);
     });
+
+    updateProjectDiscussionCountdowns();
+}
+
+function updateProjectDiscussionCountdowns() {
+    const countdownBlocks = document.querySelectorAll('.project-discussion-countdown');
+    if (!countdownBlocks.length) return;
+
+    const discussionDate = EVENTS.discussion.date;
+    const diff = discussionDate - new Date();
+
+    if (diff <= 0) {
+        countdownBlocks.forEach((block) => {
+            block.innerHTML = '<span class="project-discussion-countdown-title">Project Discussion is here</span>';
+        });
+        if (projectDiscussionCountdownInterval) {
+            clearInterval(projectDiscussionCountdownInterval);
+            projectDiscussionCountdownInterval = null;
+        }
+        return;
+    }
+
+    const parts = {
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((diff % (1000 * 60)) / 1000),
+    };
+
+    countdownBlocks.forEach((block) => {
+        Object.entries(parts).forEach(([unit, value]) => {
+            const el = block.querySelector(`[data-project-countdown-unit="${unit}"]`);
+            if (el) el.textContent = String(value).padStart(2, '0');
+        });
+    });
+}
+
+function startProjectDiscussionCountdown() {
+    updateProjectDiscussionCountdowns();
+
+    if (projectDiscussionCountdownInterval) return;
+    projectDiscussionCountdownInterval = setInterval(updateProjectDiscussionCountdowns, 1000);
 }
 
 let currentTab = 'exam';
 let currentMode = 'countdown';
 let countdownInterval = null;
+let projectDiscussionCountdownInterval = null;
 let previousValues = { days: '', hours: '', minutes: '', seconds: '' };
 
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
     createParticles();
     startCountdown();
+    startProjectDiscussionCountdown();
     updateLocalTime();
     initAudio();
     renderYearbook();
@@ -985,6 +1038,8 @@ function startCountdown() {
 
 // ===== Update Countdown =====
 function updateCountdown() {
+    updateProjectDiscussionCountdowns();
+
     const event = EVENTS[currentTab];
     const targetDate = event.date;
 
