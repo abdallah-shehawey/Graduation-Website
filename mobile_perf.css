@@ -17,9 +17,19 @@
         background: rgba(8, 10, 18, 0.95) !important; /* Solid fallback matching new dark theme */
     }
 
-    /* Simplify orb animations on mobile */
-    .orb {
-        animation: none !important;
+    /* ── Remove fixed orbs on mobile entirely ──
+       Fixed elements repaint every time the address bar shows/hides,
+       causing a lag flash at the bottom of the screen.
+       Replace with a static gradient on html/body instead. */
+    .bg-orbs {
+        display: none !important;
+    }
+
+    html,
+    body {
+        background: radial-gradient(ellipse at 20% 10%, rgba(139, 92, 246, 0.12) 0%, transparent 55%),
+                    radial-gradient(ellipse at 80% 80%, rgba(99, 102, 241, 0.10) 0%, transparent 50%),
+                    #04050d !important;
     }
 
     /* Disable hover transform animations on mobile (they cause repaints) */
