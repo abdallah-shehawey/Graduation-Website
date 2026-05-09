@@ -14,13 +14,12 @@
     .photo-modal-content {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
-        background: rgba(20, 20, 45, 0.95) !important; /* Solid fallback */
+        background: rgba(8, 10, 18, 0.95) !important; /* Solid fallback matching new dark theme */
     }
 
-    /* Reduce particle animation complexity on mobile */
-    .particle {
-        animation-timing-function: linear !important;
-        will-change: transform;
+    /* Simplify orb animations on mobile */
+    .orb {
+        animation: none !important;
     }
 
     /* Disable hover transform animations on mobile (they cause repaints) */
