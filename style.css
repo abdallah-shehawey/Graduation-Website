@@ -37,13 +37,14 @@
 html {
     scroll-behavior: smooth;
     background: #04050d;
-    overscroll-behavior: none;
+    overscroll-behavior-x: none;
 }
 
 body {
     font-family: var(--font-primary);
     min-height: 100vh;
     min-height: 100dvh;
+    overscroll-behavior-x: none;
     background: #04050d;
     color: var(--text-primary);
     overflow-x: hidden;
@@ -107,6 +108,28 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: calc(100vh - 60px);
+}
+
+/* ── Countdown mode: lock layout to one screen so footer is always visible ── */
+body.mode-countdown-active {
+    height: 100dvh;
+    overflow: hidden;
+}
+
+body.mode-countdown-active .container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    justify-content: center;
+}
+
+body.mode-countdown-active #mode-countdown {
+    flex: 1;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 /* ===== Header ===== */

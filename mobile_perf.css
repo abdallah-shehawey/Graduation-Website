@@ -68,4 +68,11 @@
     .projects-grid {
         contain: layout style;
     }
+
+    /* Remove backdrop-filter from footer buttons — causes scroll jank at page bottom */
+    .footer-btn {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
 }

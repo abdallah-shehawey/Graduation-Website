@@ -1,3 +1,7 @@
+// ===== Scroll Restoration Fix =====
+// Always start from top on page load/refresh
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
 // ===== Target Dates =====
 const EVENTS = {
     exam: {
@@ -611,13 +615,53 @@ let countdownInterval = null;
 let projectDiscussionCountdownInterval = null;
 let previousValues = { days: '', hours: '', minutes: '', seconds: '' };
 
+// ===== Swipe Gesture (Mode Switching) =====
+const MODES = ['countdown', 'yearbook', 'projects'];
+
+function initSwipeGesture() {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isSwiping   = false;
+
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isSwiping   = true;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
+        isSwiping = false;
+
+        const deltaX = e.changedTouches[0].clientX - touchStartX;
+        const deltaY = e.changedTouches[0].clientY - touchStartY;
+
+        // Only handle if horizontal movement is dominant and > 60px threshold
+        if (Math.abs(deltaX) < 60 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+        const currentIdx = MODES.indexOf(currentMode);
+        if (deltaX < 0) {
+            // Swipe LEFT → next mode
+            const nextIdx = (currentIdx + 1) % MODES.length;
+            switchMode(MODES[nextIdx]);
+        } else {
+            // Swipe RIGHT → previous mode
+            const prevIdx = (currentIdx - 1 + MODES.length) % MODES.length;
+            switchMode(MODES[prevIdx]);
+        }
+    }, { passive: true });
+}
+
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
+    window.scrollTo(0, 0);
+    document.body.classList.add('mode-countdown-active');
     startCountdown();
     startProjectDiscussionCountdown();
     updateLocalTime();
     initAudio();
     applyFilters();
+    initSwipeGesture();
 });
 
 // ===== Mode Switching (Top-Level) =====
@@ -638,18 +682,24 @@ function switchMode(mode) {
     projectsEl.style.display  = 'none';
 
     if (mode === 'countdown') {
+        document.body.classList.add('mode-countdown-active');
+        window.scrollTo(0, 0);
         countdownEl.style.display = 'flex';
-    } else if (mode === 'yearbook') {
-        yearbookEl.style.display = 'block';
-        // Clear search on open
-        document.getElementById('yearbookSearch').value = '';
-        currentSearchQuery = '';
-        selectedCategories.clear();
-        applyFilters();
-        renderStats();
-    } else if (mode === 'projects') {
-        projectsEl.style.display = 'block';
-        renderProjects();
+    } else {
+        document.body.classList.remove('mode-countdown-active');
+        window.scrollTo(0, 0);
+        if (mode === 'yearbook') {
+            yearbookEl.style.display = 'block';
+            // Clear search on open
+            document.getElementById('yearbookSearch').value = '';
+            currentSearchQuery = '';
+            selectedCategories.clear();
+            applyFilters();
+            renderStats();
+        } else if (mode === 'projects') {
+            projectsEl.style.display = 'block';
+            renderProjects();
+        }
     }
 }
 
