@@ -162,6 +162,19 @@ const STUDENTS = [
     },
   },
   {
+    name: "Islam Ahmed Elsafy",
+    photo: null,
+    track: ["Network Engineer"],
+    color: "linear-gradient(135deg, #ef4444, #b91c1c)",
+    gender: "male",
+    social: {
+      linkedin: "https://www.linkedin.com/in/islam-ahmed-torky-968126392",
+      github: "",
+      whatsapp: "01036848505",
+      facebook: "https://www.facebook.com/islam.a.torky",
+    },
+  },
+  {
     name: "Mohamed Adel",
     photo: "Pic/adel.jpeg",
     track: ["Digital Design"],
@@ -238,19 +251,6 @@ const STUDENTS = [
     },
   },
   {
-    name: "Islam Ahmed Elsafy",
-    photo: "",
-    track: ["Network"],
-    color: "linear-gradient(135deg, #ef4444, #b91c1c)",
-    gender: "male",
-    social: {
-      linkedin: "https://www.linkedin.com/in/islam-ahmed-torky-968126392",
-      github: "",
-      whatsapp: "01036848505",
-      facebook: "https://www.facebook.com/islam.a.torky",
-    },
-  },
-  {
     name: "Mohammed Taha Khalifa",
     photo: "Pic/khalifa.jpg",
     track: ["Network Engineer"],
@@ -319,8 +319,7 @@ const STUDENTS = [
     color: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
     gender: "male",
     social: {
-      linkedin:
-        "https://www.linkedin.com/in/yousef-mohamed-abd-el-fattah-3b1a0328b",
+      linkedin: "https://www.linkedin.com/in/yousef-mohamed-abd-el-fattah-3b1a0328b",
       github: "https://github.com/Yousef-fma",
       whatsapp: "+201270809908",
       facebook: "https://www.facebook.com/share/1AdT8F6sbq/",
@@ -338,5 +337,5 @@ const STUDENTS = [
       whatsapp: "+201092223738",
       facebook: "https://www.facebook.com/share/1U4nx8hwUt/",
     },
-  },
+  }
 ];

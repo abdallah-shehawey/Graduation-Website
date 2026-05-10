@@ -22,7 +22,7 @@ const GRADUATION_PROJECTS = [
       { name: "Mohamed Behiry", leader: false },
       { name: "Ahmed Elsayed", leader: false },
       { name: "Anas Ghazy", leader: false },
-      { name: "Eslam Ahmed", leader: false },
+      { name: "Islam Ahmed Elsafy", leader: false },
     ],
   },
   // ── Embedded ──
