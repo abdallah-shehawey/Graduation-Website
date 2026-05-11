@@ -163,8 +163,7 @@ const STUDENTS = [
   },
   {
     name: "Islam Ahmed Elsafy",
-    photo:
-      "https://res.cloudinary.com/dlssencv2/image/upload/v1778491533/Pic/islam.webp",
+    photo: "Pic/Islam.webp",
     track: ["Network Engineer"],
     color: "linear-gradient(135deg, #ef4444, #b91c1c)",
     gender: "male",
