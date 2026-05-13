@@ -177,7 +177,7 @@ function openPhotoModal(student) {
     photoHtml = `<div class="photo-modal-avatar" style="background: ${student.color}">${getInitials(student.name)}</div>`;
   } else {
     photoHtml = `<div class="photo-modal-avatar" style="background: ${student.color}" id="_modalAvatarFallback">${getInitials(student.name)}</div>
-      <img id="_modalPhotoImg" src="${student.photo}" alt="${student.name}" style="display:none" />`;
+      <img id="_modalPhotoImg" alt="${student.name}" style="display:none" />`;
   }
 
   modal.innerHTML = `
@@ -201,7 +201,8 @@ function openPhotoModal(student) {
 
     function tryModalLoad() {
       const sep = student.photo.includes('?') ? '&' : '?';
-      modalImg.src = modalRetry === 0 ? student.photo : student.photo + sep + '_r=' + modalRetry;
+      const url = modalRetry === 0 ? student.photo : student.photo + sep + '_r=' + modalRetry;
+      // Attach handlers BEFORE setting src — prevents race with cached images firing onload immediately
       modalImg.onload = () => {
         modalImg.style.display = '';
         if (modalAv) modalAv.style.display = 'none';
@@ -214,6 +215,7 @@ function openPhotoModal(student) {
           }, MODAL_DELAYS[modalRetry] || 8000);
         }
       };
+      modalImg.src = url; // set src last — handlers already in place
     }
     tryModalLoad();
   }
@@ -304,7 +306,8 @@ function renderYearbook(list = STUDENTS) {
       function tryLoad() {
         if (cancelled) return;
         const sep = student.photo.includes('?') ? '&' : '?';
-        img.src = retryCount === 0 ? student.photo : student.photo + sep + '_r=' + retryCount;
+        const url = retryCount === 0 ? student.photo : student.photo + sep + '_r=' + retryCount;
+        // Set handlers BEFORE src — prevents race with cached images firing onload immediately
         img.onload = () => {
           if (cancelled) return;
           img.style.display = "";
@@ -318,6 +321,7 @@ function renderYearbook(list = STUDENTS) {
           }
           // else: keep showing avatar silently
         };
+        img.src = url; // set src last — handlers already in place
       }
       tryLoad();
 
@@ -680,7 +684,8 @@ function renderProjects() {
         function tryLoadMember() {
           if (cancelled) return;
           const sep = student.photo.includes('?') ? '&' : '?';
-          img.src = retryCount === 0 ? student.photo : student.photo + sep + '_r=' + retryCount;
+          const url = retryCount === 0 ? student.photo : student.photo + sep + '_r=' + retryCount;
+          // Set handlers BEFORE src — prevents race with cached images firing onload immediately
           img.onload = () => {
             if (cancelled) return;
             img.style.display = "";
@@ -693,6 +698,7 @@ function renderProjects() {
               setTimeout(() => { retryCount++; tryLoadMember(); }, RETRY_DELAYS[retryCount] || 8000);
             }
           };
+          img.src = url; // set src last — handlers already in place
         }
         tryLoadMember();
         pill.appendChild(img);
