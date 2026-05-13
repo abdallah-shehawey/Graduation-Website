@@ -245,20 +245,41 @@ function renderYearbook(list = STUDENTS) {
     });
 
     if (student.photo) {
+      // Show avatar placeholder first, then swap to real image once loaded
+      const av = document.createElement("div");
+      av.className = "student-avatar";
+      av.style.background = student.color;
+      av.textContent = getInitials(student.name);
+      photoWrap.appendChild(av);
+
       const img = document.createElement("img");
       img.className = "student-photo";
-      img.src = student.photo;
       img.alt = student.name;
-      // img.loading = "lazy"; // Removed to allow preloading during countdown
       img.decoding = "async";
-      img.addEventListener("error", () => {
-        student.photo = null;
-        const av = document.createElement("div");
-        av.className = "student-avatar";
-        av.style.background = student.color;
-        av.textContent = getInitials(student.name);
-        photoWrap.replaceChild(av, img);
-      });
+      img.style.display = "none"; // hidden until loaded
+
+      let retryCount = 0;
+      const MAX_RETRIES = 3;
+      const RETRY_DELAYS = [2000, 4000, 8000]; // ms
+
+      function tryLoad(url) {
+        img.src = url + (url.includes('?') ? '&' : '?') + '_r=' + retryCount;
+        img.onload = () => {
+          img.style.display = "";
+          if (photoWrap.contains(av)) photoWrap.replaceChild(img, av);
+        };
+        img.onerror = () => {
+          if (retryCount < MAX_RETRIES) {
+            setTimeout(() => {
+              retryCount++;
+              tryLoad(student.photo);
+            }, RETRY_DELAYS[retryCount] || 8000);
+          }
+          // else: keep showing avatar silently
+        };
+      }
+      tryLoad(student.photo);
+
       photoWrap.appendChild(img);
     } else {
       const av = document.createElement("div");
@@ -591,19 +612,39 @@ function renderProjects() {
         pill.appendChild(leaderIcon);
       }
 
-      // Avatar
+      // Avatar — show initials first, swap to photo when loaded
       if (student && student.photo) {
+        const fb = document.createElement("span");
+        fb.className = "member-avatar-sm-initials";
+        fb.style.background = student.color;
+        fb.textContent = getInitials(member.name);
+        pill.appendChild(fb);
+
         const img = document.createElement("img");
-        img.src = student.photo;
         img.alt = member.name;
         img.className = "member-avatar-sm";
-        img.addEventListener("error", () => {
-          const fb = document.createElement("span");
-          fb.className = "member-avatar-sm-initials";
-          fb.style.background = student.color;
-          fb.textContent = getInitials(member.name);
-          img.replaceWith(fb);
-        });
+        img.style.display = "none";
+
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
+        const RETRY_DELAYS = [2000, 4000, 8000];
+
+        function tryLoadMember(url) {
+          img.src = url + (url.includes('?') ? '&' : '?') + '_r=' + retryCount;
+          img.onload = () => {
+            img.style.display = "";
+            if (pill.contains(fb)) pill.replaceChild(img, fb);
+          };
+          img.onerror = () => {
+            if (retryCount < MAX_RETRIES) {
+              setTimeout(() => {
+                retryCount++;
+                tryLoadMember(student.photo);
+              }, RETRY_DELAYS[retryCount] || 8000);
+            }
+          };
+        }
+        tryLoadMember(student.photo);
         pill.appendChild(img);
       } else {
         const av = document.createElement("span");
