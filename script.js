@@ -6,7 +6,7 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 const EVENTS = {
   exam: {
     label: "Final Exam (10:00 AM - 1:00 PM)",
-    date: new Date("2026-06-03T10:00:00"),
+    date: new Date("2026-06-03T13:00:00"), // End time is 1:00 PM
   },
   discussion: {
     label: "Project Discussion",
@@ -27,7 +27,7 @@ let drivePhotos = {};
 
 async function loadDrivePhotos() {
   try {
-    const res = await fetch('/api/photos');
+    const res = await fetch("/api/photos");
     const data = await res.json();
     if (data.success) {
       drivePhotos = data.photos;
@@ -45,7 +45,7 @@ async function loadDrivePhotos() {
       });
     }
   } catch (e) {
-    console.warn('Could not load Drive photos, falling back to avatars.', e);
+    console.warn("Could not load Drive photos, falling back to avatars.", e);
   }
 }
 
@@ -193,22 +193,25 @@ function openPhotoModal(student) {
 
   // Retry logic for modal image
   if (!isAvatar) {
-    const modalImg = modal.querySelector('#_modalPhotoImg');
-    const modalAv  = modal.querySelector('#_modalAvatarFallback');
+    const modalImg = modal.querySelector("#_modalPhotoImg");
+    const modalAv = modal.querySelector("#_modalAvatarFallback");
     let modalRetry = 0;
     const MAX_MODAL_RETRIES = 3;
     const MODAL_DELAYS = [2000, 4000, 8000];
 
     function tryModalLoad() {
-      const sep = student.photo.includes('?') ? '&' : '?';
-      const url = modalRetry === 0 ? student.photo : student.photo + sep + '_r=' + modalRetry;
+      const sep = student.photo.includes("?") ? "&" : "?";
+      const url =
+        modalRetry === 0
+          ? student.photo
+          : student.photo + sep + "_r=" + modalRetry;
       // Attach handlers BEFORE setting src — prevents race with cached images firing onload immediately
       modalImg.onload = () => {
-        modalImg.style.display = '';
-        if (modalAv) modalAv.style.display = 'none';
+        modalImg.style.display = "";
+        if (modalAv) modalAv.style.display = "none";
       };
       modalImg.onerror = () => {
-        if (modalRetry < MAX_MODAL_RETRIES && modal.style.display === 'flex') {
+        if (modalRetry < MAX_MODAL_RETRIES && modal.style.display === "flex") {
           setTimeout(() => {
             modalRetry++;
             tryModalLoad();
@@ -299,14 +302,23 @@ function renderYearbook(list = STUDENTS) {
 
       // Cancel pending retries when the card is removed from DOM
       const observer = new MutationObserver(() => {
-        if (!document.contains(card)) { cancelled = true; observer.disconnect(); }
+        if (!document.contains(card)) {
+          cancelled = true;
+          observer.disconnect();
+        }
       });
-      observer.observe(document.getElementById('studentsGrid') || document.body, { childList: true });
+      observer.observe(
+        document.getElementById("studentsGrid") || document.body,
+        { childList: true },
+      );
 
       function tryLoad() {
         if (cancelled) return;
-        const sep = student.photo.includes('?') ? '&' : '?';
-        const url = retryCount === 0 ? student.photo : student.photo + sep + '_r=' + retryCount;
+        const sep = student.photo.includes("?") ? "&" : "?";
+        const url =
+          retryCount === 0
+            ? student.photo
+            : student.photo + sep + "_r=" + retryCount;
         // Set handlers BEFORE src — prevents race with cached images firing onload immediately
         img.onload = () => {
           if (cancelled) return;
@@ -317,7 +329,10 @@ function renderYearbook(list = STUDENTS) {
         img.onerror = () => {
           if (cancelled) return;
           if (retryCount < MAX_RETRIES) {
-            setTimeout(() => { retryCount++; tryLoad(); }, RETRY_DELAYS[retryCount] || 8000);
+            setTimeout(() => {
+              retryCount++;
+              tryLoad();
+            }, RETRY_DELAYS[retryCount] || 8000);
           }
           // else: keep showing avatar silently
         };
@@ -675,16 +690,22 @@ function renderProjects() {
         const MAX_RETRIES = 3;
         const RETRY_DELAYS = [2000, 4000, 8000];
 
-        const grid = document.getElementById('projectsGrid');
+        const grid = document.getElementById("projectsGrid");
         const obs = new MutationObserver(() => {
-          if (!document.contains(pill)) { cancelled = true; obs.disconnect(); }
+          if (!document.contains(pill)) {
+            cancelled = true;
+            obs.disconnect();
+          }
         });
         if (grid) obs.observe(grid, { childList: true });
 
         function tryLoadMember() {
           if (cancelled) return;
-          const sep = student.photo.includes('?') ? '&' : '?';
-          const url = retryCount === 0 ? student.photo : student.photo + sep + '_r=' + retryCount;
+          const sep = student.photo.includes("?") ? "&" : "?";
+          const url =
+            retryCount === 0
+              ? student.photo
+              : student.photo + sep + "_r=" + retryCount;
           // Set handlers BEFORE src — prevents race with cached images firing onload immediately
           img.onload = () => {
             if (cancelled) return;
@@ -695,7 +716,10 @@ function renderProjects() {
           img.onerror = () => {
             if (cancelled) return;
             if (retryCount < MAX_RETRIES) {
-              setTimeout(() => { retryCount++; tryLoadMember(); }, RETRY_DELAYS[retryCount] || 8000);
+              setTimeout(() => {
+                retryCount++;
+                tryLoadMember();
+              }, RETRY_DELAYS[retryCount] || 8000);
             }
           };
           img.src = url; // set src last — handlers already in place
@@ -795,6 +819,11 @@ let currentMode = "countdown";
 let countdownInterval = null;
 let projectDiscussionCountdownInterval = null;
 let previousValues = { days: "", hours: "", minutes: "", seconds: "" };
+// Celebration window: show overlay only within 10 min of event ending
+const CELEBRATION_WINDOW_MS = 10 * 60 * 1000;
+// In-memory flag: prevents overlay showing twice in the same session
+let celebrationShown = {};
+let countUpMode = {};
 
 // ===== Swipe Gesture (Mode Switching) =====
 const MODES = ["countdown", "yearbook", "projects"];
@@ -920,6 +949,256 @@ function startCountdown() {
   countdownInterval = setInterval(updateCountdown, 1000);
 }
 
+// ===== Celebration overlay =====
+function showCelebrationOverlay(tab) {
+  if (celebrationShown[tab]) return;
+  celebrationShown[tab] = true;
+
+  const messages = {
+    exam: {
+      icon: "🎓",
+      badge: "DONE!",
+      title: "Congratulations!",
+      en: "The Final Exam is officially OVER.",
+      ar: "كفاره يجدعاااااااان 🙌",
+      tag: "Class of 2026",
+    },
+    discussion: {
+      icon: "🏆",
+      badge: "DONE!",
+      title: "Congratulations!",
+      en: "Project Discussion is officially complete.",
+      ar: "خلصت المناقشة! ماشاء الله 🌟",
+      tag: "Class of 2026",
+    },
+    party: {
+      icon: "🥳",
+      badge: "GRADUATED!",
+      title: "Happy Graduation!",
+      en: "This is YOUR day. You earned every second of it.",
+      ar: "مبروك التخرج! ربنا يكمل بالخير 🎉",
+      tag: "Class of 2026",
+    },
+  };
+
+  const msg = messages[tab] || messages.exam;
+  const AUTO_DISMISS_MS = 7000;
+
+  const overlay = document.createElement("div");
+  overlay.id = "celebrationOverlay";
+
+  overlay.innerHTML = `
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+      #celebrationOverlay {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; align-items: center; justify-content: center;
+        padding: 1.5rem;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+        animation: co-bgIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
+      }
+
+      /* Animated mesh background */
+      #co-bg {
+        position: absolute; inset: 0;
+        background:
+          radial-gradient(ellipse 80% 60% at 20% 30%, rgba(139,92,246,0.55) 0%, transparent 65%),
+          radial-gradient(ellipse 60% 50% at 80% 70%, rgba(236,72,153,0.45) 0%, transparent 60%),
+          radial-gradient(ellipse 50% 40% at 50% 10%, rgba(251,191,36,0.25) 0%, transparent 55%),
+          #0d0020;
+        animation: co-bgPulse 4s ease-in-out infinite alternate;
+      }
+      @keyframes co-bgPulse {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.12); }
+      }
+
+      /* Floating rings */
+      .co-ring {
+        position: absolute; border-radius: 50%;
+        border: 1.5px solid rgba(255,255,255,0.07);
+        animation: co-ringGrow linear infinite;
+        pointer-events: none;
+      }
+      @keyframes co-ringGrow {
+        from { transform: scale(0.3); opacity: 0.6; }
+        to   { transform: scale(2.5); opacity: 0; }
+      }
+
+      /* Glass card */
+      #co-card {
+        position: relative; z-index: 2;
+        max-width: 520px; width: 100%;
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 28px;
+        padding: clamp(2rem,5vw,3rem) clamp(1.5rem,5vw,2.5rem);
+        box-shadow:
+          0 0 0 1px rgba(139,92,246,0.2),
+          0 30px 80px rgba(0,0,0,0.6),
+          inset 0 1px 0 rgba(255,255,255,0.15);
+        animation: co-cardIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s both;
+        text-align: center;
+      }
+      @keyframes co-bgIn    { from{opacity:0;} to{opacity:1;} }
+      @keyframes co-cardIn  { from{opacity:0;transform:translateY(40px) scale(0.94);} to{opacity:1;transform:none;} }
+
+      /* Badge */
+      #co-badge {
+        display: inline-block;
+        background: linear-gradient(135deg,#fbbf24,#f59e0b);
+        color: #1a0a00; font-weight: 800; font-size: 0.72rem;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        padding: 0.3rem 1rem; border-radius: 50px;
+        margin-bottom: 1.4rem;
+        animation: co-fadeUp 0.5s ease 0.4s both;
+        box-shadow: 0 0 20px rgba(251,191,36,0.4);
+      }
+
+      /* Icon */
+      #co-icon {
+        font-size: clamp(3.5rem,10vw,5.5rem);
+        display: block; margin-bottom: 0.6rem;
+        animation: co-iconBounce 2.4s ease-in-out 0.5s infinite;
+        filter: drop-shadow(0 0 18px rgba(251,191,36,0.5));
+        line-height: 1;
+      }
+      @keyframes co-iconBounce {
+        0%,100%{transform:translateY(0) scale(1);}
+        40%{transform:translateY(-14px) scale(1.08);}
+        60%{transform:translateY(-6px) scale(1.04);}
+      }
+
+      /* Title */
+      #co-title {
+        font-size: clamp(1.8rem,6vw,3.2rem); font-weight: 900;
+        line-height: 1.2; margin-bottom: 0.6rem;
+        padding: 0 0.2em 0.05em; /* prevents gradient-clip cutting last char */
+        background: linear-gradient(135deg,#fff 20%,#c4b5fd 60%,#f9a8d4 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: co-fadeUp 0.5s ease 0.55s both;
+      }
+
+      /* Divider */
+      #co-divider {
+        width: 60px; height: 3px; margin: 0.8rem auto 1.1rem;
+        border-radius: 2px;
+        background: linear-gradient(90deg,#8b5cf6,#ec4899,#fbbf24);
+        animation: co-fadeUp 0.5s ease 0.65s both;
+      }
+
+      /* Subtitle EN */
+      #co-en {
+        font-size: clamp(0.95rem,3vw,1.2rem); font-weight: 400;
+        color: rgba(255,255,255,0.85); margin-bottom: 0.5rem;
+        animation: co-fadeUp 0.5s ease 0.75s both;
+      }
+
+      /* Subtitle AR */
+      #co-ar {
+        font-size: clamp(0.9rem,2.8vw,1.1rem); font-weight: 500;
+        color: #c4b5fd; margin-bottom: 1.8rem;
+        direction: rtl;
+        animation: co-fadeUp 0.5s ease 0.85s both;
+      }
+
+      /* Progress bar */
+      #co-progress-wrap {
+        width: 100%; height: 3px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 2px; overflow: hidden;
+        animation: co-fadeUp 0.4s ease 1s both;
+      }
+      #co-progress-bar {
+        height: 100%; width: 100%;
+        background: linear-gradient(90deg,#8b5cf6,#ec4899,#fbbf24);
+        border-radius: 2px;
+        transform-origin: left;
+        animation: co-shrink ${AUTO_DISMISS_MS}ms linear 1.1s both;
+      }
+      @keyframes co-shrink { from{transform:scaleX(1);} to{transform:scaleX(0);} }
+
+
+      /* Sparkle dots */
+      .co-spark {
+        position: absolute; border-radius: 50%;
+        pointer-events: none;
+        animation: co-sparkAnim ease-in-out infinite;
+      }
+      @keyframes co-sparkAnim {
+        0%,100%{opacity:0.15;transform:scale(0.7);}
+        50%{opacity:0.9;transform:scale(1.2);}
+      }
+
+      @keyframes co-fadeUp {
+        from{opacity:0;transform:translateY(16px);}
+        to{opacity:1;transform:none;}
+      }
+    </style>
+
+    <div id="co-bg"></div>
+
+    <!-- Floating rings -->
+    <div class="co-ring" style="width:300px;height:300px;top:50%;left:50%;margin:-150px 0 0 -150px;animation-duration:5s;animation-delay:0s;"></div>
+    <div class="co-ring" style="width:500px;height:500px;top:50%;left:50%;margin:-250px 0 0 -250px;animation-duration:7s;animation-delay:1.5s;"></div>
+    <div class="co-ring" style="width:700px;height:700px;top:50%;left:50%;margin:-350px 0 0 -350px;animation-duration:9s;animation-delay:0.8s;"></div>
+
+    <!-- Sparkle dots -->
+    <div class="co-spark" style="width:8px;height:8px;background:#fbbf24;top:18%;left:15%;animation-duration:2.1s;animation-delay:0.3s;"></div>
+    <div class="co-spark" style="width:5px;height:5px;background:#ec4899;top:22%;right:18%;animation-duration:1.8s;animation-delay:0.8s;"></div>
+    <div class="co-spark" style="width:10px;height:10px;background:#8b5cf6;bottom:20%;left:20%;animation-duration:2.5s;animation-delay:0.1s;"></div>
+    <div class="co-spark" style="width:6px;height:6px;background:#34d399;bottom:25%;right:15%;animation-duration:2.2s;animation-delay:1s;"></div>
+    <div class="co-spark" style="width:4px;height:4px;background:#fff;top:35%;right:10%;animation-duration:1.6s;animation-delay:0.4s;"></div>
+    <div class="co-spark" style="width:7px;height:7px;background:#f9a8d4;top:60%;left:8%;animation-duration:2.8s;animation-delay:0.6s;"></div>
+
+    <!-- Card -->
+    <div id="co-card">
+      <div id="co-badge">${msg.tag}</div>
+      <span id="co-icon">${msg.icon}</span>
+      <div id="co-title">${msg.title}</div>
+      <div id="co-divider"></div>
+      <div id="co-en">${msg.en}</div>
+      <div id="co-ar">${msg.ar}</div>
+      <div id="co-progress-wrap">
+        <div id="co-progress-bar"></div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Confetti bursts
+  launchConfetti();
+  setTimeout(launchConfetti, 900);
+  setTimeout(launchConfetti, 1800);
+
+  // Auto-dismiss
+  setTimeout(dismissCelebration, AUTO_DISMISS_MS + 1100);
+}
+
+function dismissCelebration() {
+  const overlay = document.getElementById("celebrationOverlay");
+  if (!overlay) return;
+
+  overlay.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+  overlay.style.opacity = "0";
+  overlay.style.transform = "scale(1.04)";
+
+  // Switch to count-up for current tab
+  countUpMode[currentTab] = true;
+
+  startCountdown();
+
+  setTimeout(() => {
+    overlay.remove();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, 650);
+}
+
 // ===== Update Countdown =====
 function updateCountdown() {
   updateProjectDiscussionCountdowns();
@@ -952,26 +1231,62 @@ function updateCountdown() {
   };
   const formattedDate = targetDate.toLocaleString("en-GB", options);
 
-  eventLabel.innerHTML = `${event.label}: <span>${formattedDate}</span>`;
-
   const now = new Date();
   const diff = targetDate - now;
 
   if (diff <= 0) {
-    // Event has passed
-    document.getElementById("days").textContent = "00";
-    document.getElementById("hours").textContent = "00";
-    document.getElementById("minutes").textContent = "00";
-    document.getElementById("seconds").textContent = "00";
+    // ── Event has passed ──
+    const elapsed = Math.abs(diff); // ms since event ended
 
-    // Show celebration
-    document.getElementById("celebration").style.display = "block";
-    launchConfetti();
-    clearInterval(countdownInterval);
+    if (!celebrationShown[currentTab] && elapsed <= CELEBRATION_WINDOW_MS) {
+      // Within the 10-minute celebration window → show overlay
+      showCelebrationOverlay(currentTab);
+      // Pause interval — will restart on overlay dismissal
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      return;
+    }
+
+    // ── COUNT-UP mode ──
+    // (elapsed already computed above)
+    const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
+    const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+    const daysStr = String(days).padStart(2, "0");
+    const hoursStr = String(hours).padStart(2, "0");
+    const minutesStr = String(minutes).padStart(2, "0");
+    const secondsStr = String(seconds).padStart(2, "0");
+
+    animateNumber("days", daysStr, previousValues.days);
+    animateNumber("hours", hoursStr, previousValues.hours);
+    animateNumber("minutes", minutesStr, previousValues.minutes);
+    animateNumber("seconds", secondsStr, previousValues.seconds);
+
+    previousValues = {
+      days: daysStr,
+      hours: hoursStr,
+      minutes: minutesStr,
+      seconds: secondsStr,
+    };
+
+    // Label changes to count-up
+    const countUpLabels = {
+      exam: "Time since Final Exam ended",
+      discussion: "Time since Project Discussion",
+      party: "Time since Graduation Party",
+    };
+    eventLabel.innerHTML = `🎉 ${countUpLabels[currentTab] || "Time since event"}: <span>${formattedDate}</span>`;
+
+    updateLocalTime();
     return;
   }
 
-  document.getElementById("celebration").style.display = "none";
+  // ── Normal countdown ──
+  eventLabel.innerHTML = `${event.label}: <span>${formattedDate}</span>`;
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -1140,22 +1455,43 @@ function launchConfetti() {
     "#34d399",
     "#60a5fa",
     "#f472b6",
+    "#fff",
+    "#fb923c",
   ];
+  const shapes = ["circle", "square", "triangle", "star"];
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 150; i++) {
     setTimeout(() => {
       const confetti = document.createElement("div");
       confetti.classList.add("confetti");
+      const shape = shapes[Math.floor(Math.random() * shapes.length)];
       confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.top = "-20px";
       confetti.style.backgroundColor =
         colors[Math.floor(Math.random() * colors.length)];
-      confetti.style.width = Math.random() * 10 + 5 + "px";
-      confetti.style.height = Math.random() * 10 + 5 + "px";
-      confetti.style.borderRadius = Math.random() > 0.5 ? "50%" : "0";
-      confetti.style.animationDuration = Math.random() * 2 + 2 + "s";
+      const size = Math.random() * 12 + 6;
+      confetti.style.width = size + "px";
+      confetti.style.height = size + "px";
+      if (shape === "circle") confetti.style.borderRadius = "50%";
+      else if (shape === "star") {
+        confetti.style.borderRadius = "0";
+        confetti.style.clipPath =
+          "polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)";
+      } else if (shape === "triangle") {
+        confetti.style.width = "0";
+        confetti.style.height = "0";
+        confetti.style.borderLeft = size / 2 + "px solid transparent";
+        confetti.style.borderRight = size / 2 + "px solid transparent";
+        confetti.style.borderBottom =
+          size +
+          "px solid " +
+          colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.backgroundColor = "transparent";
+      }
+      confetti.style.animationDuration = Math.random() * 2.5 + 2 + "s";
+      confetti.style.animationDelay = Math.random() * 0.5 + "s";
       document.body.appendChild(confetti);
-
-      setTimeout(() => confetti.remove(), 4000);
-    }, i * 30);
+      setTimeout(() => confetti.remove(), 5000);
+    }, i * 20);
   }
 }
