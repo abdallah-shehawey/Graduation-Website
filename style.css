@@ -135,18 +135,26 @@ body.mode-countdown-active #mode-countdown {
     position: relative;
 }
 
-/* Mobile only: remove the height lock so body grows naturally.
-   Base body already has min-height:100dvh, so content is always at
-   least full-screen; scroll appears only when font/zoom makes it taller. */
+/* Mobile only: remove height lock, allow vertical scroll, clip horizontal bleed.
+   overflow-x:clip (not hidden) prevents the card-glow 300%-wide pseudo-element
+   from creating horizontal scrollable space, while overflow-y:auto allows
+   natural vertical scroll when font is enlarged. */
 @media (max-width: 768px) {
     body.mode-countdown-active {
-        height: auto;           /* body sizes to content, not forced 100dvh */
-        overflow-x: hidden;
+        /* 100svh = small viewport height: fixed size, never changes when
+           address bar shows/hides → body stays at exact content size,
+           no phantom empty space below footer.
+           overflow-y:auto → scroll only if font/zoom makes content taller.
+           overscroll-behavior-y:contain → no bounce past the end. */
+        height: 100svh;
+        overflow-x: clip;
         overflow-y: auto;
+        overscroll-behavior-y: contain;
     }
 
     body.mode-countdown-active .container {
-        overflow: visible;
+        overflow-x: clip;
+        overflow-y: visible;
     }
 }
 
