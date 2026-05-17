@@ -143,20 +143,19 @@ body.mode-countdown-active #mode-countdown {
 
 @media (max-width: 768px) {
     /*
-     * ROOT FIX: Normal webpage behavior on mobile.
-     *
-     * Why empty scroll happened:
-     *   - base body has min-height: 100dvh (forces body to be full screen)
-     *   - height: 100svh was added (another artificial size)
-     *   - container flex:1 tried to grow inside that oversized body
-     *   → body became taller than its content → empty space below footer
-     *
-     * Fix: body = real content height only. No artificial sizing.
+     * MOBILE LAYOUT:
+     *   - height: auto       → body is never artificially locked to screen height
+     *   - min-height: 100dvh → body is at least the full screen height, so when
+     *                          content is SHORT the footer (margin-top:auto) can
+     *                          push all the way to the bottom of the viewport.
+     *                          When content is TALL (scroll needed), body grows
+     *                          beyond 100dvh and footer sits right after content
+     *                          with no gap.
      */
     body.mode-countdown-active {
-        height: auto;       /* no artificial height lock */
-        min-height: 0;      /* override base body min-height: 100dvh */
-        overflow-x: clip;   /* prevent glow bleed — does NOT affect scroll height */
+        height: auto;           /* no artificial height lock */
+        min-height: 100dvh;     /* sticky-footer: let margin-top:auto push footer down */
+        overflow-x: clip;       /* prevent glow bleed — does NOT affect scroll height */
     }
 
     body.mode-countdown-active .container {
