@@ -149,6 +149,15 @@ html {
     gap: 6px;
 }
 
+.mode-icon {
+    font-size: 16px;
+}
+
+.mode-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
 /* ── 12. Countdown card — tighter on small screens ── */
 .card-content {
     padding: 20px 14px;
