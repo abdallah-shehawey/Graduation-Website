@@ -4,10 +4,17 @@
    Desktop styles are NEVER affected by this file.
    ========================================================================== */
 
-/* ── 1. Global overflow hardening ── */
+/* ── 1. Global overflow hardening + font inflation fix ── */
 html {
     /* Prevent any element from creating horizontal scroll */
     overflow-x: clip;
+    /*
+     * Stop Android Chrome / Safari from automatically inflating font sizes.
+     * 100% = "use exactly what CSS says, no inflation" — safe for pinch-to-zoom.
+     * Fixes: text appears small → then jumps large (layout shift on page load).
+     */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
