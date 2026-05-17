@@ -135,26 +135,29 @@ body.mode-countdown-active #mode-countdown {
     position: relative;
 }
 
-/* Mobile only: remove height lock, allow vertical scroll, clip horizontal bleed.
-   overflow-x:clip (not hidden) prevents the card-glow 300%-wide pseudo-element
-   from creating horizontal scrollable space, while overflow-y:auto allows
-   natural vertical scroll when font is enlarged. */
 @media (max-width: 768px) {
+    /*
+     * ROOT FIX: Normal webpage behavior on mobile.
+     *
+     * Why empty scroll happened:
+     *   - base body has min-height: 100dvh (forces body to be full screen)
+     *   - height: 100svh was added (another artificial size)
+     *   - container flex:1 tried to grow inside that oversized body
+     *   → body became taller than its content → empty space below footer
+     *
+     * Fix: body = real content height only. No artificial sizing.
+     */
     body.mode-countdown-active {
-        /* 100svh = small viewport height: fixed size, never changes when
-           address bar shows/hides → body stays at exact content size,
-           no phantom empty space below footer.
-           overflow-y:auto → scroll only if font/zoom makes content taller.
-           overscroll-behavior-y:contain → no bounce past the end. */
-        height: 100svh;
-        overflow-x: clip;
-        overflow-y: auto;
-        overscroll-behavior-y: contain;
+        height: auto;       /* no artificial height lock */
+        min-height: 0;      /* override base body min-height: 100dvh */
+        overflow-x: clip;   /* prevent glow bleed — does NOT affect scroll height */
     }
 
     body.mode-countdown-active .container {
-        overflow-x: clip;
-        overflow-y: visible;
+        flex: none;         /* don't grow — natural content height only */
+        min-height: 0;      /* override calc(100vh - 60px) */
+        overflow: visible;  /* no clipping of content */
+        justify-content: flex-start; /* natural top-to-bottom flow */
     }
 }
 
