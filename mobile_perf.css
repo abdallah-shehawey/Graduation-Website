@@ -172,10 +172,22 @@ html {
     max-width: 100%;
 }
 
-/* ── 14. Student card — touch-friendly minimum tap size ── */
+/* ── 14. Student card — social icons always in one row ── */
 .social-btn {
-    min-width: 36px;
-    min-height: 36px;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+}
+
+.student-card .social-links {
+    flex-wrap: nowrap;   /* force single row — never drop to second line */
+    gap: 5px;
+}
+
+.student-card .social-icon {
+    width: 15px;
+    height: 15px;
 }
 
 /* ── 15. Project tabs — always scrollable, no text wrap ── */
