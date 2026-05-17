@@ -52,8 +52,11 @@ body {
 }
 
 /* ── 4b. Event label — smaller on mobile so full date fits without orphaned "pm" ── */
+/* px values (not rem) so browser font-scale setting doesn't cause a size-jump flash */
 .event-label {
     font-size: clamp(11px, 3vw, 14px);
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
 }
 
 /* ── 5. Disable hover transforms on touch devices (causes repaints on tap) ── */
