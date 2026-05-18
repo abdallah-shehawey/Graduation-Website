@@ -49,6 +49,8 @@ body {
     min-height: 100vh;
     min-height: 100dvh;
     overscroll-behavior-x: none;
+    overscroll-behavior-y: none;      /* prevent mobile bounce when content height oscillates */
+    overflow-anchor: none;            /* prevent scroll-anchor jump every second */
     background: #04050d;
     color: var(--text-primary);
     overflow-x: hidden;
@@ -591,6 +593,7 @@ body.mode-countdown-active #mode-countdown {
     padding: 35px 40px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    contain: layout style;            /* isolate inner reflows — prevents countdown updates from shifting page height */
 }
 
 .event-label {
