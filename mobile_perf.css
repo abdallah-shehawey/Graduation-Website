@@ -158,7 +158,7 @@ html {
     height: 16px;
 }
 
-/* ── 11b. At ≤480 px the mode-label is hidden — make icons bigger to fill the space ── */
+/* ── 11b. At ≤480 px the mode-label is hidden — bigger icon, compensate padding so button stays same size ── */
 @media (max-width: 480px) {
     .mode-icon {
         font-size: 26px;
@@ -167,6 +167,11 @@ html {
     .mode-icon svg {
         width: 26px;
         height: 26px;
+    }
+
+    /* Reduce vertical padding to offset the taller icon — keeps button height unchanged */
+    .mode-btn {
+        padding: 5px 8px;
     }
 }
 
