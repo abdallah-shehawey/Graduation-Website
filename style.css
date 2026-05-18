@@ -41,6 +41,7 @@ html {
     font-size: 16px;                  /* lock 1rem = 16px across ALL browsers */
     -webkit-text-size-adjust: 100%;   /* prevent Chrome/Safari auto font scaling */
     text-size-adjust: 100%;           /* prevent Firefox/Edge auto font scaling  */
+    scrollbar-gutter: stable;         /* reserve scrollbar space — prevents layout shift every second */
 }
 
 body {
@@ -2041,7 +2042,7 @@ body.mode-countdown-active #mode-countdown {
     .project-tabs {
         width: 100%;
         justify-content: center;
-        overflow-x: visible;
+        overflow-x: auto;
     }
 
     .project-tab {
